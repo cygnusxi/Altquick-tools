@@ -4,7 +4,7 @@
 include("config.php"); 
 
 function placeMarketOrder($side, $price) {
-    global $apiKey, $apiSecret, $totaltrades;
+    global $apiKey, $apiSecret, $totaltrades, $totalQuantity;
 
     // Set the API endpoint
     $url = 'https://altquick.com/api/v1/order';
@@ -49,7 +49,17 @@ function placeMarketOrder($side, $price) {
 
     // Execute the request
     $response = curl_exec($ch);
+	
+	// Extract the quantity value
+    $quantity = json_decode($response, true)['quantity'];
 
+    // Add the quantity value to the $totalQuantity variable
+    $totalQuantity += $quantity;
+	
+	//caculate total btc sats spent
+	//$totalSats = (float) ($totalQuantity * $price);
+    //$totalSatsf = (float) $totalSats;
+	
     // Check for cURL errors
     if (curl_errno($ch)) {
         echo 'cURL error: ' . curl_error($ch);
@@ -62,6 +72,8 @@ function placeMarketOrder($side, $price) {
 	echo '***********************************************' . PHP_EOL;
 	echo 'Executing ' . $side . ' continuously           ' . PHP_EOL;
 	echo 'Total Trades = ' . $totaltrades . '            ' . PHP_EOL;
+	echo 'Total Coins = ' . $totalQuantity . '           ' . PHP_EOL;
+	//echo 'Total BTC Cost = ' . $totalSats . '    ' . PHP_EOL;
 	echo '                                               ' . PHP_EOL;
         echo 'Last Trade Details: ' . $response;
     }
@@ -89,6 +101,8 @@ function placeMarketOrder($side, $price) {
 	//$z = (int) $z;
 
 	//assign final var values
+	$totalSats = 0;
+	$totalQuantity = 0;
 	$totaltrades = 0;
 	$price = $x;
 	//$min = $y;
@@ -104,5 +118,5 @@ if ($side !== 'buy' && $side !== 'sell') {
 while (true) {
 	$totaltrades++;
     placeMarketOrder($side, $price);
-    sleep(rand(12, 36)); // Sleep for a random number of seconds between 1200 and 3600 (20 to 60 minutes)
+    sleep(rand(1200, 3600)); // Sleep for a random number of seconds between 1200 and 3600 (20 to 60 minutes)
 }
