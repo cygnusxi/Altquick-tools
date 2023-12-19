@@ -4,7 +4,7 @@
 include("config.php"); 
 
 function placeMarketOrder($side, $price) {
-    global $apiKey, $apiSecret;
+    global $apiKey, $apiSecret, $totaltrades;
 
     // Set the API endpoint
     $url = 'https://altquick.com/api/v1/order';
@@ -55,7 +55,15 @@ function placeMarketOrder($side, $price) {
         echo 'cURL error: ' . curl_error($ch);
     } else {
         // Output the response
-        echo 'POST Response: ' . $response;
+		//display improvements
+		system('clear');
+	echo '***********************************************' . PHP_EOL;
+	echo '******* Welcome to CURE Altquick Tools  *******' . PHP_EOL;
+	echo '***********************************************' . PHP_EOL;
+	echo 'Executing ' . $side . ' continuously           ' . PHP_EOL;
+	echo 'Total Trades = ' . $totaltrades . '            ' . PHP_EOL;
+	echo '                                               ' . PHP_EOL;
+        echo 'Last Trade Details: ' . $response;
     }
 	echo '
 	';
@@ -64,6 +72,7 @@ function placeMarketOrder($side, $price) {
 }
 
 	///super fancy CLI FX
+	system('clear');
 	echo '***********************************************' . PHP_EOL;
 	echo '******* Welcome to CURE Altquick Tools  *******' . PHP_EOL;
 	echo '***********************************************' . PHP_EOL;
@@ -80,6 +89,7 @@ function placeMarketOrder($side, $price) {
 	//$z = (int) $z;
 
 	//assign final var values
+	$totaltrades = 0;
 	$price = $x;
 	//$min = $y;
 	//$max = $z;
@@ -92,6 +102,7 @@ if ($side !== 'buy' && $side !== 'sell') {
 }
 
 while (true) {
+	$totaltrades++;
     placeMarketOrder($side, $price);
-    sleep(rand(1200, 3600)); // Sleep for a random number of seconds between 1200 and 3600 (20 to 60 minutes)
+    sleep(rand(12, 36)); // Sleep for a random number of seconds between 1200 and 3600 (20 to 60 minutes)
 }
