@@ -3,7 +3,7 @@
 //load credentials
 include("config.php"); 
 
-function placeMarketOrder() {
+function placeMarketOrder($side, $price) {
     global $apiKey, $apiSecret;
 
     // Set the API endpoint
@@ -15,15 +15,13 @@ function placeMarketOrder() {
     // Set the request parameters
     $params = array(
         'market' => 'BTC_CURE',
-        'side' => 'buy',
+        'side' => $side,
         'type' => 'limit',
-		'price' => 0.00000035 ,
+		'price' => $price,
         'quantity' => mt_rand(2, 6)
     );
 
-    // Sort the parameters alphabetically
-    //ksort($params);
-
+ 
     // Build the query string
     $queryString = http_build_query($params);
 
@@ -65,7 +63,35 @@ function placeMarketOrder() {
     curl_close($ch);
 }
 
+	///super fancy CLI FX
+	echo '***********************************************' . PHP_EOL;
+	echo '******* Welcome to CURE Altquick Tools  *******' . PHP_EOL;
+	echo '***********************************************' . PHP_EOL;
+
+	// Prompt the user for input
+	$side = readline("Enter 'buy' or 'sell' to indicate your trade side: ");
+	$x = readline("Enter the order price in satoshis: ");
+	//$y = readline("Enter the minimum coins per order: ");
+	//$z = readline("Enter the maximum coins per order: ");
+
+	// Convert the input values to the appropriate data types
+	$x = (float) $x;
+	//$y = (int) $y;
+	//$z = (int) $z;
+
+	//assign final var values
+	$price = $x;
+	//$min = $y;
+	//$max = $z;
+	//$quantity = mt_rand($min, $max)
+	
+	// Validate the trade side input
+if ($side !== 'buy' && $side !== 'sell') {
+    echo "Invalid trade side. Please enter 'buy' or 'sell'." . PHP_EOL;
+    exit;
+}
+
 while (true) {
-    placeMarketOrder();
+    placeMarketOrder($side, $price);
     sleep(rand(1200, 3600)); // Sleep for a random number of seconds between 1200 and 3600 (20 to 60 minutes)
 }
